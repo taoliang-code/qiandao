@@ -76,7 +76,7 @@ class SouShuBaClient:
         self.proxies = proxies
 
     def login_form_hash(self):
-        rst = self.session.get(f'https://{self.hostname}/member.php?mod=logging&action=login').text
+        rst = self.session.get(f'http://{self.hostname}/member.php?mod=logging&action=login').text
         loginhash = re.search(r'<div id="main_messaqge_(.+?)">', rst).group(1)
         formhash = re.search(r'<input type="hidden" name="formhash" value="(.+?)" />', rst).group(1)
         return loginhash, formhash
@@ -84,16 +84,16 @@ class SouShuBaClient:
     def login(self):
         """Login with username and password"""
         loginhash, formhash = self.login_form_hash()
-        login_url = f'https://{self.hostname}/member.php?mod=logging&action=login&loginsubmit=yes' \
+        login_url = f'http://{self.hostname}/member.php?mod=logging&action=login&loginsubmit=yes' \
                     f'&handlekey=register&loginhash={loginhash}&inajax=1'
 
 
         headers = copy(self._common_headers)
-        headers["origin"] = f'https://{self.hostname}'
-        headers["referer"] = f'https://{self.hostname}/'
+        headers["origin"] = f'http://{self.hostname}'
+        headers["referer"] = f'http://{self.hostname}/'
         payload = {
             'formhash': formhash,
-            'referer': f'https://{self.hostname}/',
+            'referer': f'http://{self.hostname}/',
             'username': self.username,
             'password': self.password,
             'questionid': self.questionid,
@@ -107,7 +107,7 @@ class SouShuBaClient:
             raise ValueError('Verify Failed! Check your username and password!')
 
     def credit(self):
-        credit_url = f"https://{self.hostname}/home.php?mod=spacecp&ac=credit&showcredit=1&inajax=1&ajaxtarget=extcreditmenu_menu"
+        credit_url = f"http://{self.hostname}/home.php?mod=spacecp&ac=credit&showcredit=1&inajax=1&ajaxtarget=extcreditmenu_menu"
         credit_rst = self.session.get(credit_url).text
 
         # 解析 XML，提取 CDATA
@@ -121,17 +121,17 @@ class SouShuBaClient:
         return hcredit_2
 
     def space_form_hash(self):
-        rst = self.session.get(f'https://{self.hostname}/home.php').text
+        rst = self.session.get(f'http://{self.hostname}/home.php').text
         formhash = re.search(r'<input type="hidden" name="formhash" value="(.+?)" />', rst).group(1)
         return formhash
 
     def space(self):
         formhash = self.space_form_hash()
-        space_url = f"https://{self.hostname}/home.php?mod=spacecp&ac=doing&handlekey=doing&inajax=1"
+        space_url = f"http://{self.hostname}/home.php?mod=spacecp&ac=doing&handlekey=doing&inajax=1"
 
         headers = copy(self._common_headers)
-        headers["origin"] = f'https://{self.hostname}'
-        headers["referer"] = f'https://{self.hostname}/home.php'
+        headers["origin"] = f'http://{self.hostname}'
+        headers["referer"] = f'http://{self.hostname}/home.php'
 
         for x in range(5):
             payload = {
